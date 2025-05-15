@@ -11,7 +11,7 @@
 </head>
 <body>
 
-    <h1>Enhanced Rich Text Editor</h1>
+    <h1>Rich Text Editor</h1>
 
     <div class="editor-container">
         <div class="toolbar">
@@ -44,9 +44,13 @@
             </div>
 
         <div class="save-load-controls">
-            <button id="saveLocalButton">Save Locally</button> <button id="loadLocalButton">Load Locally</button> <button id="saveToFileSystemButton">Download</button> </div>
+            <button onclick="myFunction()" id="DarkmodeButton">Toggle Darkmode</button> <button id="saveLocalButton">Save Locally</button> <button id="loadLocalButton">Load Locally</button> <button id="saveToFileSystemButton">Download</button> </div>
     </div>
     <script>
+        function myFunction() {
+   var element = document.body;
+   element.classList.toggle("dark-mode");
+}
 
         const editorContent = document.getElementById('editorContent');
         const boldButton = document.getElementById('boldButton');

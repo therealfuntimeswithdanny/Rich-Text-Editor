@@ -130,10 +130,18 @@
         }
 
         #loadLocalButton { /* Renamed */
-            background-color: #17a2b8; /* Cyan */
+            background-color: #b8179d; /* Purple */
             color: white;
         }
         #loadLocalButton:hover {
+            background-color: #80106d;
+        }
+
+         #DarkmodeButton { /* Renamed */
+            background-color: #17a2b8; /* Cyan */
+            color: white;
+        }
+        #DarkmodeButton:hover {
             background-color: #138496;
         }
 
@@ -144,7 +152,6 @@
           #saveToFileSystemButton:hover {
               background-color: #f57c00;
           }
-
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
@@ -168,3 +175,7 @@
              }
         }
 
+.dark-mode {
+  background-color: black;
+  color: white;
+}
