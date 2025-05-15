@@ -19,6 +19,13 @@
             font-size: 1.8em;
         }
 
+        .dark-mode h1 {
+            color: white; /* Blue */
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
         .editor-container {
             background-color: #fff;
             padding: 20px;
@@ -125,34 +132,85 @@
             background-color: #28a745; /* Green */
             color: white;
         }
+
+        .dark-mode #saveLocalButton { /* Renamed */
+            background-color: black; 
+            color: white;
+        }
+
         #saveLocalButton:hover {
             background-color: #218838;
+        }
+
+        .dark-mode #saveLocalButton:hover {
+            background-color: white;
+            color: black;
         }
 
         #loadLocalButton { /* Renamed */
             background-color: #b8179d; /* Purple */
             color: white;
         }
+
+        .dark-mode #loadLocalButton { /* Renamed */
+            background-color: black; 
+            color: white;
+        }
+
         #loadLocalButton:hover {
             background-color: #80106d;
         }
 
-         #DarkmodeButton { /* Renamed */
+        .dark-mode #loadLocalButton:hover {
+            background-color: white;
+            color: black;
+        }
+
+        #DarkmodeButton { /* Renamed */
             background-color: #17a2b8; /* Cyan */
             color: white;
         }
+
+        .dark-mode #DarkmodeButton { /* Renamed */
+            background-color: black; 
+            color: white;
+        }
+
         #DarkmodeButton:hover {
             background-color: #138496;
         }
 
-         #saveToFileSystemButton { /* New button */
+        .dark-mode #DarkmodeButton:hover {
+            background-color: white;
+            color: black
+        }
+
+        #saveToFileSystemButton { /* New button */
              background-color: #ff9800; /* Orange */
              color: white;
-         }
-          #saveToFileSystemButton:hover {
-              background-color: #f57c00;
-          }
+        }
 
+        .dark-mode #saveToFileSystemButton { /* New button */
+             background-color: black; 
+             color: white;
+        }
+
+        #saveToFileSystemButton:hover {
+              background-color: #f57c00;
+        }
+
+        .dark-mode #saveToFileSystemButton:hover {
+              background-color: white;
+              color: black;
+        }
+
+        a {
+            color: black
+        }
+
+        .dark-mode a {
+            color: white;
+        }
         /* Responsive adjustments */
         @media (max-width: 600px) {
             h1 {
@@ -174,8 +232,7 @@
                  justify-content: stretch; /* Stretch buttons */
              }
         }
-
-.dark-mode {
+        .dark-mode {
   background-color: black;
   color: white;
 }
