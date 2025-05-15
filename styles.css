@@ -14,16 +14,30 @@
 
         h1 {
             color: #007bff; /* Blue */
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             text-align: center;
             font-size: 1.8em;
         }
 
         .dark-mode h1 {
             color: white; /* Blue */
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             text-align: center;
             font-size: 1.8em;
+        }
+
+        h3 {
+            color: #007bff; /* Blue */
+            margin-bottom: 5px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .dark-mode h3 {
+            color: white; /* Blue */
+            margin-bottom: 5px;
+            text-align: center;
+            font-size: 1.2em;
         }
 
         .editor-container {
@@ -101,10 +115,13 @@
             border-color: #007bff; /* Highlight border on focus */
         }
 
+        .dark-mode button a {
+            color: black;
+        }
          /* Placeholder text style */
          #editorContent:empty:before {
              content: attr(placeholder);
-             color: #a9a9a9; /* Light grey color for placeholder */
+             color: black; /* Light grey color for placeholder */
              pointer-events: none; /* Allow clicks to pass through to the editor */
              display: block; /* Needed for the :empty pseudo-element */
          }
