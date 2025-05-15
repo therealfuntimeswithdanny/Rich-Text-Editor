@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rich Text Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background-color: #f4f7f6; /* Light background */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #007bff; /* Blue */
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .editor-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px; /* Max width for the editor area */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            align-items: center; /* Vertically align items */
+        }
+
+        .toolbar button,
+        .toolbar select,
+        .toolbar input[type="color"] { /* Style for buttons, select, and color picker */
+            padding: 6px 10px;
+            font-size: 0.9em;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #e9ecef; /* Light gray button */
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            height: 32px; /* Give controls a consistent height */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+        }
+
+         .toolbar select {
+             padding-right: 25px; /* Space for dropdown arrow */
+             -webkit-appearance: none; /* Remove default dropdown arrow */
+             -moz-appearance: none;
+             appearance: none;
+             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2C114.7L159.7%2C242c-5.4%2C5.4-14.2%2C5.4-19.6%2C0L5.4%2C114.7C-1.8%2C107.5-1.8%2C95.1%2C5.4%2C87.9c7.2-7.2%2C19.6-7.2%2C26.8%2C0l127.3%2C127.3L260.2%2C87.9c7.2-7.2%2C19.6-7.2%2C26.8%2C0C294.2%2C95.1%2C294.2%2C107.5%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
+             background-repeat: no-repeat;
+             background-position: right 8px top 50%;
+             background-size: 12px auto;
+         }
+
+
+        .toolbar button:hover,
+        .toolbar select:hover,
+        .toolbar input[type="color"]:hover {
+            background-color: #dee2e6;
+            border-color: #bbb;
+        }
+
+        .toolbar button:active {
+             background-color: #c0c4c8;
+        }
+
+        /* Style for the editable content area */
+        #editorContent {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 300px; /* Minimum height for typing */
+            outline: none; /* Remove default outline */
+            overflow-y: auto; /* Add scrollbar if content overflows vertically */
+            line-height: 1.6; /* Improve readability */
+            background-color: #fff; /* White background for editor */
+        }
+
+        #editorContent:focus {
+            border-color: #007bff; /* Highlight border on focus */
+        }
+
+         /* Placeholder text style */
+         #editorContent:empty:before {
+             content: attr(placeholder);
+             color: #a9a9a9; /* Light grey color for placeholder */
+             pointer-events: none; /* Allow clicks to pass through to the editor */
+             display: block; /* Needed for the :empty pseudo-element */
+         }
+
+
+        .save-load-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: flex-end; /* Align buttons to the right */
+        }
+
+        .save-load-controls button {
+            padding: 8px 15px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #saveLocalButton { /* Renamed */
+            background-color: #28a745; /* Green */
+            color: white;
+        }
+        #saveLocalButton:hover {
+            background-color: #218838;
+        }
+
+        #loadLocalButton { /* Renamed */
+            background-color: #17a2b8; /* Cyan */
+            color: white;
+        }
+        #loadLocalButton:hover {
+            background-color: #138496;
+        }
+
+         #saveToFileSystemButton { /* New button */
+             background-color: #ff9800; /* Orange */
+             color: white;
+         }
+          #saveToFileSystemButton:hover {
+              background-color: #f57c00;
+          }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            .editor-container {
+                padding: 15px;
+            }
+            .toolbar, .save-load-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+             .toolbar button, .save-load-controls button,
+             .toolbar select, .toolbar input[type="color"] {
+                width: 100%; /* Full width controls */
+                box-sizing: border-box;
+             }
+             .save-load-controls {
+                 justify-content: stretch; /* Stretch buttons */
+             }
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Enhanced Rich Text Editor</h1>
+
+    <div class="editor-container">
+        <div class="toolbar">
+            <button id="boldButton">Bold</button>
+            <button id="italicButton">Italic</button>
+            <button id="underlineButton">Underline</button>
+            <button id="ulButton">Bullet List</button>
+            <button id="olButton">Numbered List</button>
+
+            <select id="fontSizeSelect">
+                <option value="1">Very Small</option>
+                <option value="2">Small</option>
+                <option value="3" selected>Normal</option>
+                <option value="4">Medium</option>
+                <option value="5">Large</option>
+                <option value="6">Very Large</option>
+                <option value="7">Huge</option>
+            </select>
+
+            <input type="color" id="colorPicker" value="#000000">
+
+            <button id="alignLeftButton">Align Left</button>
+            <button id="alignCenterButton">Align Center</button>
+            <button id="alignRightButton">Align Right</button>
+            <button id="justifyButton">Justify</button>
+
+            </div>
+
+        <div id="editorContent" contenteditable="true" placeholder="Start typing here...">
+            </div>
+
+        <div class="save-load-controls">
+            <button id="saveLocalButton">Save Locally</button> <button id="loadLocalButton">Load Locally</button> <button id="saveToFileSystemButton">Save to File System</button> </div>
+    </div>
+
+    <script>
+        const editorContent = document.getElementById('editorContent');
+        const boldButton = document.getElementById('boldButton');
+        const italicButton = document.getElementById('italicButton');
+        const underlineButton = document.getElementById('underlineButton');
+        const ulButton = document.getElementById('ulButton');
+        const olButton = document.getElementById('olButton');
+        const fontSizeSelect = document.getElementById('fontSizeSelect');
+        const colorPicker = document.getElementById('colorPicker');
+        const alignLeftButton = document.getElementById('alignLeftButton');
+        const alignCenterButton = document.getElementById('alignCenterButton');
+        const alignRightButton = document.getElementById('alignRightButton');
+        const justifyButton = document.getElementById('justifyButton');
+        const saveLocalButton = document.getElementById('saveLocalButton'); // Renamed
+        const loadLocalButton = document.getElementById('loadLocalButton'); // Renamed
+        const saveToFileSystemButton = document.getElementById('saveToFileSystemButton'); // New
+
+        const EDITOR_STORAGE_KEY = 'richTextEditorContent'; // Key for saving/loading within the editor app
+        const EDITOR_LOAD_KEY = 'editorLoadContent'; // Key for receiving content from FS
+        const EDITOR_SAVE_KEY = 'editorSaveContent'; // Key for sending content to FS
+        const EDITOR_FILE_INFO_KEY = 'editorFileInfo'; // Key for receiving file info from FS
+
+
+        // --- Formatting Functions ---
+        // document.execCommand() is used for basic rich text editing in contenteditable elements.
+        // Note: execCommand is deprecated but widely supported for these basic tasks.
+        // For more advanced editors, a library or the Input Events API would be used.
+
+        function formatText(command, value = null) {
+            // Ensure the editor has focus before applying command
+            editorContent.focus();
+            // document.execCommand() is the key here
+            document.execCommand(command, false, value);
+        }
+
+        // --- Save/Load Functions ---
+
+        // Function to save content within the editor's own localStorage
+        function saveContentLocal() {
+            try {
+                // Get the full HTML content of the editable div
+                const content = editorContent.innerHTML;
+                localStorage.setItem(EDITOR_STORAGE_KEY, content);
+                console.log('Content saved locally.');
+                alert('Content saved locally!'); // Simple confirmation
+            } catch (e) {
+                console.error('Error saving content locally:', e);
+                alert('Error saving content locally.');
+            }
+        }
+
+        // Function to load content from the editor's own localStorage
+        function loadContentLocal() {
+            try {
+                // Get content from localStorage
+                const savedContent = localStorage.getItem(EDITOR_STORAGE_KEY);
+                if (savedContent !== null) {
+                    // Set the innerHTML of the editable div
+                    editorContent.innerHTML = savedContent;
+                    console.log('Content loaded locally.');
+                    alert('Content loaded locally!'); // Simple confirmation
+                } else {
+                    console.log('No local saved content found.');
+                    alert('No local saved content found.');
+                }
+            } catch (e) {
+                console.error('Error loading content locally:', e);
+                alert('Error loading content locally.');
+            }
+        }
+
+        // Function to check and load content passed from the File System
+        function checkForFileSystemContent() {
+             try {
+                 const contentToLoad = localStorage.getItem(EDITOR_LOAD_KEY);
+                 const fileInfo = localStorage.getItem(EDITOR_FILE_INFO_KEY); // Get file info too
+
+                 if (contentToLoad !== null && fileInfo !== null) {
+                     console.log("Content found from File System.");
+                     // Load the content into the editor
+                     editorContent.innerHTML = contentToLoad;
+
+                     // We could potentially display the file name somewhere in the editor UI
+                     const parsedFileInfo = JSON.parse(fileInfo);
+                     console.log("Editing file:", parsedFileInfo.fileName);
+                     // Example: Update the h1 or add a file name display element
+                     // document.getElementById('fileNameDisplay').textContent = `Editing: ${parsedFileInfo.fileName}`;
+
+
+                     // Clear the localStorage keys after loading
+                     localStorage.removeItem(EDITOR_LOAD_KEY);
+                     localStorage.removeItem(EDITOR_FILE_INFO_KEY);
+                     console.log("File System load keys cleared from localStorage.");
+
+                     return true; // Indicate that content was loaded
+                 }
+                 return false; // Indicate no content was found
+             } catch (e) {
+                 console.error('Error checking/loading File System content:', e);
+                 // Clear the keys even on error to prevent issues
+                 localStorage.removeItem(EDITOR_LOAD_KEY);
+                 localStorage.removeItem(EDITOR_FILE_INFO_KEY);
+                 return false;
+             }
+        }
+
+        // Function to save the current editor content back to the File System
+        function saveContentToFileSystem() {
+            try {
+                 // Check if we have file info (meaning we opened this from the File System)
+                 const fileInfo = localStorage.getItem(EDITOR_FILE_INFO_KEY);
+                 if (fileInfo === null) {
+                     alert("Cannot save to File System. This content was not opened from the File System.");
+                     return;
+                 }
+
+                // Get the current HTML content from the editor
+                const contentToSave = editorContent.innerHTML;
+
+                // Save the content and file info to localStorage for the File System to pick up
+                localStorage.setItem(EDITOR_SAVE_KEY, contentToSave);
+                // The fileInfo key is already set when opening, we just need the FS to read it.
+                // We could re-save it here for robustness, but it should still be there.
+                // localStorage.setItem(EDITOR_FILE_INFO_KEY, fileInfo); // Re-save file info
+
+                console.log('Content saved to localStorage for File System.');
+                alert('Content saved to File System! Go back to the File System tab and click "Check for Editor Saves".'); // Instruct user
+
+            } catch (e) {
+                console.error('Error saving content to File System via localStorage:', e);
+                alert('Error saving content to File System.');
+            }
+        }
+
+
+        // --- Event Listeners ---
+        boldButton.addEventListener('click', () => formatText('bold'));
+        italicButton.addEventListener('click', () => formatText('italic'));
+        underlineButton.addEventListener('click', () => formatText('underline'));
+        ulButton.addEventListener('click', () => formatText('insertUnorderedList'));
+        olButton.addEventListener('click', () => formatText('insertOrderedList'));
+
+        // Event listener for font size select
+        fontSizeSelect.addEventListener('change', (event) => {
+            // 'fontSize' command uses a value from 1 to 7
+            formatText('fontSize', event.target.value);
+        });
+
+        // Event listener for color picker
+        colorPicker.addEventListener('input', (event) => {
+             // 'foreColor' command uses the color value
+             formatText('foreColor', event.target.value);
+        });
+
+        // Event listeners for text alignment
+        alignLeftButton.addEventListener('click', () => formatText('justifyLeft'));
+        alignCenterButton.addEventListener('click', () => formatText('justifyCenter'));
+        alignRightButton.addEventListener('click', () => formatText('justifyRight'));
+        justifyButton.addEventListener('click', () => formatText('justifyFull'));
+
+
+        saveLocalButton.addEventListener('click', saveContentLocal); // Renamed listener
+        loadLocalButton.addEventListener('click', loadContentLocal); // Renamed listener
+        saveToFileSystemButton.addEventListener('click', saveContentToFileSystem); // New listener
+
+
+        // Initial load logic
+        window.addEventListener('load', () => {
+            // First, check if content was passed from the File System
+            const contentLoadedFromFS = checkForFileSystemContent();
+
+            if (!contentLoadedFromFS) {
+                // If no content from FS, try loading from local storage
+                loadContentLocal();
+            }
+        });
+
+
+    </script>
+
+</body>
+</html>
